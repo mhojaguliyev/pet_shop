@@ -1,0 +1,41 @@
+version: '3.8'
+services:
+    main:
+        container_name: app
+        build:
+            context: .
+            dockerfile: ./docker/Dockerfile
+        command: 'php artisan serve --host=0.0.0.0'
+        volumes:
+            - .:/app
+        networks:
+            - pet_shop
+        ports:
+            - "${APP_PORT:-8000}:8000"
+        depends_on:
+            - database
+
+    database:
+        image: mysql:8.0
+        container_name: database
+        restart: unless-stopped
+        environment:
+            MYSQL_DATABASE: "${DB_DATABASE}"
+            MYSQL_USER: "${DB_USERNAME}"
+            MYSQL_PASSWORD: "${DB_PASSWORD}"
+            MYSQL_ROOT_PASSWORD: "${DB_PASSWORD}"
+            MYSQL_ALLOW_EMPTY_PASSWORD: 1
+        volumes:
+            - db:/var/lib/mysql
+        networks:
+            - pet_shop
+        ports:
+            - "${DB_FORWARD_PORT:-3306}:3306"
+
+networks:
+    pet_shop:
+        driver: bridge
+
+volumes:
+    db:
+        driver: local
