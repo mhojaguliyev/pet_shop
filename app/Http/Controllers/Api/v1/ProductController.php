@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\v1;
 
 use App\Http\Controllers\ApiController;
 use App\Http\Requests\Api\v1\Product\ProductRequest;
+use App\Http\Resources\Api\v1\PaginationResource;
 use App\Http\Resources\Api\v1\ProductResource;
 use App\Models\Product;
 use Illuminate\Database\Eloquent\Builder;
@@ -48,14 +49,10 @@ class ProductController extends ApiController
                 page: $request->integer('page') ? $request->integer('page') : 1
             );
 
+        $data->appends($request->all());
         return $this->sendResponse(data: [
             'data' => ProductResource::collection($data),
-            'pagination' => [
-                'page' => $data->currentPage(),
-                'perPage' => $data->perPage(),
-                'prevPageUrl' => $data->previousPageUrl(),
-                'nextPageUrl' => $data->nextPageUrl(),
-            ]
+            'pagination' => new PaginationResource($data),
         ]);
     }
 
