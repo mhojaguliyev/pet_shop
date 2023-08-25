@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\v1\CategoryController;
 use App\Http\Controllers\Api\v1\ProductController;
 use App\Http\Controllers\api\v1\User\AuthController;
 use Illuminate\Support\Facades\Route;
@@ -11,6 +12,10 @@ Route::prefix('user')->group(function () {
     Route::post('logout', [AuthController::class, 'logout']);
     Route::get('/', [AuthController::class, 'profile']);
 });
+
+
+// category routes
+Route::get('categories', [CategoryController::class, 'index']);
 
 
 // product routes
