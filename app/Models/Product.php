@@ -16,6 +16,8 @@ class Product extends Model
 
     protected $guarded = ['id'];
 
+    protected $with = ['category'];
+
     protected $casts = [
         'metadata' => 'array',
     ];
