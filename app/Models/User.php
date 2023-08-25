@@ -62,7 +62,7 @@ class User extends Authenticatable implements JWTSubject
 
     public function getJWTIdentifier(): string
     {
-        return 'uuid';
+        return $this->getKey();
     }
 
     public function getJWTCustomClaims(): array

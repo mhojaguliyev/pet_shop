@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\Api\v1\User;
 
+use App\Enums\UserType;
 use App\Events\LoggedIn;
 use App\Http\Controllers\ApiController;
+use App\Http\Resources\Api\v1\UserResource;
 use Illuminate\Http\JsonResponse;
 use App\Http\Requests\Api\v1\LoginRequest;
 
@@ -11,7 +13,10 @@ class AuthController extends ApiController
 {
     public function __construct()
     {
-        $this->middleware('auth.jwt', ['except' => ['login']]);
+        $this->middleware(
+            ['auth:api', 'user_type:' . UserType::USER->value],
+            ['except' => ['login']]
+        );
     }
 
     public function login(LoginRequest $request): JsonResponse
@@ -38,5 +43,11 @@ class AuthController extends ApiController
 
         // send response
         return $this->sendResponse('Successfully logged out');
+    }
+
+    public function profile(): JsonResponse
+    {
+        $user = auth()->user();
+        return $this->sendResponse(data: new UserResource($user));
     }
 }

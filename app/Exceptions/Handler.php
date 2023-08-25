@@ -4,6 +4,8 @@ namespace App\Exceptions;
 
 use App\Http\Controllers\ApiController;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Throwable;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Exceptions\TokenBlacklistedException;
@@ -33,6 +35,9 @@ class Handler extends ExceptionHandler
         $this->renderable(fn (TokenBlacklistedException $e) => $apiController->sendResponse($e->getMessage(), code: 500));
         $this->renderable(fn (JWTException $e) => $apiController->sendResponse('Unauthenticated', code: 401));
         $this->renderable(fn (AuthenticationException $e) => $apiController->sendResponse('Unauthenticated', code: 401));
+        $this->renderable(fn (AuthenticationException $e) => $apiController->sendResponse('Unauthenticated', code: 401));
+        $this->renderable(fn (MethodNotAllowedHttpException $e) => $apiController->sendResponse($e->getMessage(), code: 500));
+        $this->renderable(fn (HttpException $e) => $apiController->sendResponse($e->getMessage(), code: $e->getCode()));
 
         $this->reportable(function (Throwable $e) {
 
