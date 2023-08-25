@@ -4,7 +4,6 @@ namespace App\Providers;
 
 use App\Events\LoggedIn;
 use App\Listeners\SaveLoggedUserInfo;
-use App\Listeners\SetJwtTokenUsed;
 use App\Models\Auth\JwtToken;
 use App\Observers\Auth\JwtTokenObserver;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
