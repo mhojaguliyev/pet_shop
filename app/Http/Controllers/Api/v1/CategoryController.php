@@ -18,6 +18,7 @@ class CategoryController extends ApiController
         // product table columns
         $tableColumns = Schema::getColumnListing((new Category())->getTable());
 
+        // fetch data
         $data = Category::query()
             ->when(
                 $request->filled('sortBy') && in_array($request->input('sortBy'), $tableColumns),
@@ -33,7 +34,10 @@ class CategoryController extends ApiController
                 page: $request->integer('page') ? $request->integer('page') : 1
             );
 
+        // appent input parameters
         $data->appends($request->all());
+
+        // response
         return $this->sendResponse(data: [
             'data' => CategoryResource::collection($data),
             'pagination' => new PaginationResource($data),

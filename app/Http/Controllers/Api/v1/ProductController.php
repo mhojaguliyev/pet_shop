@@ -8,19 +8,26 @@ use App\Http\Resources\Api\v1\PaginationResource;
 use App\Http\Resources\Api\v1\ProductResource;
 use App\Models\Product;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Schema;
-use PHPStan\Type\Type;
 
 class ProductController extends ApiController
 {
+    public function __construct()
+    {
+        $this->middleware(
+            ['auth:api'],
+            ['except' => ['index', 'show']]
+        );
+    }
+
     public function index(Request $request): JsonResponse
     {
         // product table columns
         $productTableColumns = Schema::getColumnListing((new Product())->getTable());
 
+        // fetch data
         $data = Product::with(['category'])
             ->when(
                 $request->filled('title'),
@@ -50,7 +57,10 @@ class ProductController extends ApiController
                 page: $request->integer('page') ? $request->integer('page') : 1
             );
 
+        // append input parameters
         $data->appends($request->all());
+
+        // response
         return $this->sendResponse(data: [
             'data' => ProductResource::collection($data),
             'pagination' => new PaginationResource($data),
@@ -60,7 +70,7 @@ class ProductController extends ApiController
     public function create(ProductRequest $request): JsonResponse
     {
         // create product
-        $productData = $this->_transformValidatedProductData($request);
+        $productData = $request->prepareValidated();
         $product = Product::create($productData);
 
         // load relation
@@ -76,7 +86,7 @@ class ProductController extends ApiController
     public function update(Product $product, ProductRequest $request): JsonResponse
     {
         // update product
-        $productData = $this->_transformValidatedProductData($request);
+        $productData = $request->prepareValidated();
         $product->update($productData);
 
         return $this->sendResponse('Updated', data: new ProductResource($product));
@@ -88,21 +98,5 @@ class ProductController extends ApiController
         $product->delete();
 
         return $this->sendResponse('Deleted.');
-    }
-
-    /**
-     * @param FormRequest $request
-     * @return array<string, Type>
-     */
-    private function _transformValidatedProductData(FormRequest $request): array
-    {
-        $productData = $request->validated();
-        return [
-            'categories_uuid' => $productData['categoriesUuid'],
-            'title' => $productData['title'],
-            'price' => $productData['price'],
-            'description' => $productData['description'],
-            'metadata' => $productData['metadata'] ?? [],
-        ];
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\User;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,8 +16,9 @@ class UserTypeMiddleware
      */
     public function handle(Request $request, Closure $next, int $type): Response
     {
+        /** @var User|null $user */
         $user = auth()->user();
-        if ($user && property_exists($user, 'is_admin') && $user->is_admin == $type) {
+        if ($user && $user->is_admin == $type) {
             return $next($request);
         }
 

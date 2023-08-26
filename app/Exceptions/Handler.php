@@ -35,7 +35,6 @@ class Handler extends ExceptionHandler
         $this->renderable(fn (TokenBlacklistedException $e) => $apiController->sendResponse($e->getMessage(), code: 500));
         $this->renderable(fn (JWTException $e) => $apiController->sendResponse('Unauthenticated', code: 401));
         $this->renderable(fn (AuthenticationException $e) => $apiController->sendResponse('Unauthenticated', code: 401));
-        $this->renderable(fn (AuthenticationException $e) => $apiController->sendResponse('Unauthenticated', code: 401));
         $this->renderable(fn (MethodNotAllowedHttpException $e) => $apiController->sendResponse($e->getMessage(), code: 500));
         $this->renderable(fn (HttpException $e) => $apiController->sendResponse($e->getMessage(), code: $e->getStatusCode()));
 
