@@ -2,9 +2,14 @@
 
 namespace App\Http\Resources\Api\v1;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Pagination\LengthAwarePaginator;
 
+/**
+ * @mixin LengthAwarePaginator<Model>
+ */
 class PaginationResource extends JsonResource
 {
     /**

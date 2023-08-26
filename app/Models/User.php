@@ -55,6 +55,9 @@ class User extends Authenticatable implements JWTSubject
         'password' => 'hashed',
     ];
 
+    /**
+     * @return HasMany<Order>
+     */
     public function orders(): HasMany
     {
         return $this->hasMany(Order::class, 'user_uuid', 'uuid');
@@ -65,6 +68,9 @@ class User extends Authenticatable implements JWTSubject
         return $this->getKey();
     }
 
+    /**
+     * @return array<int, string>
+     */
     public function getJWTCustomClaims(): array
     {
         return [];

@@ -30,7 +30,9 @@ class AuthController extends ApiController
         }
 
         // fire event
-        LoggedIn::dispatch(auth()->user(), $token);
+        if (auth()->user() !== null && is_string($token)) {
+            LoggedIn::dispatch(auth()->user(), $token);
+        }
 
         // send response
         return $this->sendResponse(data: ['token' => $token, 'tokenType' => 'bearer']);

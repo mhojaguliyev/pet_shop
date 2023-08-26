@@ -14,9 +14,8 @@ class UserTypeMiddleware
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle(Request $request, Closure $next, $type): Response
+    public function handle(Request $request, Closure $next, int $type): Response
     {
-        /** @var User $user */
         $user = auth()->user();
         if ($user && $user->is_admin == $type) {
             return $next($request);

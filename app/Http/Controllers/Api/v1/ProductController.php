@@ -12,6 +12,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Schema;
+use PHPStan\Type\Type;
 
 class ProductController extends ApiController
 {
@@ -89,6 +90,10 @@ class ProductController extends ApiController
         return $this->sendResponse('Deleted.');
     }
 
+    /**
+     * @param FormRequest $request
+     * @return array<string, Type>
+     */
     private function _transformValidatedProductData(FormRequest $request): array
     {
         $productData = $request->validated();

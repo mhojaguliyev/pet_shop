@@ -21,10 +21,12 @@ class CategoryController extends ApiController
         $data = Category::query()
             ->when(
                 $request->filled('sortBy') && in_array($request->input('sortBy'), $tableColumns),
-                fn(Builder $query) => $query->orderBy(
-                    $request->input('sortBy'),
-                    $request->input('desc') ? 'desc' : 'asc'
-                )
+                function (Builder $query) use ($request) {
+                    $query->orderBy(
+                        $request->input('sortBy'),
+                        $request->input('desc') ? 'desc' : 'asc'
+                    );
+                }
             )
             ->paginate(
                 perPage: $request->integer('limit') ? $request->integer('limit') : 20,

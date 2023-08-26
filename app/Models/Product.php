@@ -16,12 +16,18 @@ class Product extends Model
 
     protected $guarded = ['id'];
 
+    /**
+     * @var string[]
+     */
     protected $with = ['category'];
 
     protected $casts = [
         'metadata' => 'array',
     ];
 
+    /**
+     * @return BelongsTo<Category, Product>
+     */
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class, 'categories_uuid', 'uuid');

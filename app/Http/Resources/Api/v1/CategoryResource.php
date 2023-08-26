@@ -2,9 +2,13 @@
 
 namespace App\Http\Resources\Api\v1;
 
+use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * @mixin Category
+ */
 class CategoryResource extends JsonResource
 {
     /**
@@ -20,8 +24,8 @@ class CategoryResource extends JsonResource
             'uuid' => $this->uuid,
             'title' => $this->title,
             'slug' => $this->slug,
-            'createdAt' => !empty($this->created_at) ? $this->created_at->format($dateFormat) : null,
-            'updatedAt' => !empty($this->updated_at) ? $this->updated_at->format($dateFormat) : null,
+            'createdAt' => optional($this->created_at)->format($dateFormat),
+            'updatedAt' => optional($this->updated_at)->format($dateFormat),
         ];
     }
 }

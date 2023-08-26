@@ -14,6 +14,9 @@ class OrderStatus extends Model
 
     protected $guarded = ['id'];
 
+    /**
+     * @return HasMany<Order>
+     */
     public function orders(): HasMany
     {
         return $this->hasMany(Order::class, 'order_status_uuid', 'uuid');

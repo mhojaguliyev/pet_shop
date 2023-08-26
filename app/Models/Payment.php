@@ -20,6 +20,9 @@ class Payment extends Model
         'details' => 'array',
     ];
 
+    /**
+     * @return HasOne<Order>
+     */
     public function order(): HasOne
     {
         return $this->hasOne(Order::class, 'payment_uuid', 'uuid');

@@ -20,16 +20,25 @@ class Order extends Model
         'shipped_at' => 'datetime',
     ];
 
+    /**
+     * @return BelongsTo<User, Order>
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_uuid', 'uuid');
     }
 
+    /**
+     * @return BelongsTo<Payment, Order>
+     */
     public function payment(): BelongsTo
     {
         return $this->belongsTo(Payment::class, 'payment_uuid', 'uuid');
     }
 
+    /**
+     * @return BelongsTo<OrderStatus, Order>
+     */
     public function status(): BelongsTo
     {
         return $this->belongsTo(OrderStatus::class, 'order_status_uuid', 'uuid');
