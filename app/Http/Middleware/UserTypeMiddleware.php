@@ -11,12 +11,12 @@ class UserTypeMiddleware
     /**
      * Handle an incoming request.
      *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     * @param Closure(Request): (Response) $next
      */
     public function handle(Request $request, Closure $next, int $type): Response
     {
         $user = auth()->user();
-        if ($user && $user->is_admin == $type) {
+        if ($user && property_exists($user, 'is_admin') && $user->is_admin == $type) {
             return $next($request);
         }
 
