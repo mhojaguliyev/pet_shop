@@ -24,26 +24,26 @@ class ProductController extends ApiController
         $data = Product::with(['category'])
             ->when(
                 $request->filled('title'),
-                fn(Builder $query) => $query->where('title', 'like', '%' . $request->input('title') . '%')
+                fn (Builder $query) => $query->where('title', 'like', '%' . $request->input('title') . '%')
             )
             ->when(
                 $request->filled('sortBy') && in_array($request->input('sortBy'), $productTableColumns),
-                fn(Builder $query) => $query->orderBy(
+                fn (Builder $query) => $query->orderBy(
                     $request->input('sortBy'),
                     $request->input('desc') ? 'desc' : 'asc'
                 )
             )
             ->when(
                 $request->filled('category'),
-                fn(Builder $query) => $query->whereHas(
+                fn (Builder $query) => $query->whereHas(
                     'categories',
-                    fn(Builder $query) => $query->where('title', 'like', '%' . $request->input('category') . '%')
+                    fn (Builder $query) => $query->where('title', 'like', '%' . $request->input('category') . '%')
                 )
             )
             // assume max price
             ->when(
                 $request->integer('price'),
-                fn(Builder $query) => $query->where('price', '<', $request->integer('price'))
+                fn (Builder $query) => $query->where('price', '<', $request->integer('price'))
             )
             ->paginate(
                 perPage: $request->integer('limit') ? $request->integer('limit') : 20,

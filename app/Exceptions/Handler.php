@@ -29,7 +29,7 @@ class Handler extends ExceptionHandler
      */
     public function register(): void
     {
-        $apiController = new ApiController;
+        $apiController = new ApiController();
 
         // jwt auth exceptions
         $this->renderable(fn (TokenBlacklistedException $e) => $apiController->sendResponse($e->getMessage(), code: 500));

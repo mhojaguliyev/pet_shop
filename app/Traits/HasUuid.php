@@ -4,7 +4,8 @@ namespace App\Traits;
 
 use Illuminate\Support\Str;
 
-trait HasUuid {
+trait HasUuid
+{
     /**
      * Generate uuid for model Eloquent model's uuid column
      *
