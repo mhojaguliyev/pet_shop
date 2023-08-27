@@ -23,7 +23,7 @@ class ProductFactory extends Factory
         return [
             'categories_uuid' => Category::factory()->create()->uuid,
             'title' => fake()->sentence(3),
-            'price' => fake()->randomNumber(2),
+            'price' => fake()->numberBetween(1),
             'description' => fake()->paragraph,
         ];
     }
