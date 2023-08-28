@@ -12,7 +12,6 @@ class SaveLoggedUserInfo
      */
     public function __construct()
     {
-        //
     }
 
     /**

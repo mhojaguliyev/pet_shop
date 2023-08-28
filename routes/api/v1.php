@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\Api\v1\CategoryController;
 use App\Http\Controllers\Api\v1\ProductController;
-use App\Http\Controllers\api\v1\User\AuthController as UserAuthController;
+use App\Http\Controllers\Api\v1\User\AuthController as UserAuthController;
 use Illuminate\Support\Facades\Route;
 
 Route::group(['as' => 'api.'], function () {
@@ -10,14 +10,11 @@ Route::group(['as' => 'api.'], function () {
     Route::post('user/login', [UserAuthController::class, 'login']);
     Route::post('user/logout', [UserAuthController::class, 'logout']);
 
-
     // user routes
     Route::get('user', [UserAuthController::class, 'profile']);
 
-
     // category routes
     Route::get('categories', [CategoryController::class, 'index']);
-
 
     // product routes
     Route::get('products', [ProductController::class, 'index']);

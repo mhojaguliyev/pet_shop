@@ -5,9 +5,9 @@ namespace App\Http\Controllers\Api\v1\User;
 use App\Enums\UserType;
 use App\Events\LoggedIn;
 use App\Http\Controllers\ApiController;
+use App\Http\Requests\Api\v1\LoginRequest;
 use App\Http\Resources\Api\v1\UserResource;
 use Illuminate\Http\JsonResponse;
-use App\Http\Requests\Api\v1\LoginRequest;
 
 class AuthController extends ApiController
 {
@@ -25,7 +25,7 @@ class AuthController extends ApiController
         $credentials['is_admin'] = false;
 
         // auth check
-        if (!$token = auth()->attempt($credentials)) {
+        if (! $token = auth()->attempt($credentials)) {
             return $this->sendResponse('Unauthorized', code: 401);
         }
 
