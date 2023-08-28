@@ -10,6 +10,7 @@ class CategoryFilters extends QueryFilter
 {
     /**
      * @param string $column
+     *
      * @return Builder<Model>
      */
     public function sortBy(string $column): Builder

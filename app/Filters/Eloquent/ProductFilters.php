@@ -3,16 +3,25 @@
 namespace App\Filters\Eloquent;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Schema;
 
 class ProductFilters extends QueryFilter
 {
-    public function title($search): Builder
+    /**
+     * @param string $search
+     * @return Builder<Model>
+     */
+    public function title(string $search): Builder
     {
         return $this->builder->where('title', 'like', "%{$search}%");
     }
 
-    public function sortBy($column): Builder
+    /**
+     * @param string $column
+     * @return Builder<Model>
+     */
+    public function sortBy(string $column): Builder
     {
         if (in_array($column, Schema::getColumnListing('products'))) {
             $direction = isset($this->filters()['desc']) && $this->filters()['desc'] === 'true';
@@ -22,7 +31,11 @@ class ProductFilters extends QueryFilter
         return $this->builder;
     }
 
-    public function category($search): Builder
+    /**
+     * @param string $search
+     * @return Builder<Model>
+     */
+    public function category(string $search): Builder
     {
         return $this->builder->whereHas(
             'categories',
@@ -30,9 +43,12 @@ class ProductFilters extends QueryFilter
         );
     }
 
-    public function price($value): Builder
+    /**
+     * @param float $value
+     * @return Builder<Model>
+     */
+    public function price(float $value): Builder
     {
-        $value = (float) $value;
         if ($value) {
             $this->builder->where('price', '<', $value);
         }
