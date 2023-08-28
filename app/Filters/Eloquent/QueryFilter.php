@@ -33,4 +33,9 @@ abstract class QueryFilter
 
         return $this->builder;
     }
+
+    public function limit(): int
+    {
+        return $this->filters()['limit'] ?? 20;
+    }
 }

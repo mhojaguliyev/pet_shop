@@ -39,16 +39,4 @@ class ProductFilters extends QueryFilter
 
         return $this->builder;
     }
-
-    public function limit($count = 20): Builder
-    {
-        $count = intval($count) ?: 20;
-        return $this->builder->take($count);
-    }
-
-    public function page($number = 1): Builder
-    {
-        $number = intval($number) ?: 1;
-        return $this->builder->forPage($number);
-    }
 }

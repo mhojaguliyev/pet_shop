@@ -22,7 +22,7 @@ class ProductController extends ApiController
 
     public function index(ProductFilters $filters): JsonResponse
     {
-        $data = Product::filter($filters)->paginate();
+        $data = Product::filter($filters)->paginate($filters->limit());
 
         // response
         return $this->sendResponse(data: [

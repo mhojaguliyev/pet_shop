@@ -13,7 +13,7 @@ class CategoryController extends ApiController
 {
     public function index(CategoryFilters $filters): JsonResponse
     {
-        $data = Category::filter($filters)->paginate();
+        $data = Category::filter($filters)->paginate($filters->limit());
 
         // response
         return $this->sendResponse(data: [
