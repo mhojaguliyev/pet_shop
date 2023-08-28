@@ -21,11 +21,11 @@ class PaginationResource extends JsonResource
     {
         return [
             'page' => $this->currentPage(),
-            'total' => $this->total(),
             'lastPage' => $this->lastPage(),
             'perPage' => $this->perPage(),
-            'prevPageUrl' => $this->previousPageUrl(),
-            'nextPageUrl' => $this->nextPageUrl(),
+            'total' => $this->total(),
+            'prevPageUrl' => $this->withQueryString()->previousPageUrl(),
+            'nextPageUrl' => $this->withQueryString()->nextPageUrl(),
         ];
     }
 }

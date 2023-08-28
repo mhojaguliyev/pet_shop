@@ -2,15 +2,13 @@
 
 namespace App\Http\Controllers\Api\v1;
 
+use App\Filters\Eloquent\ProductFilters;
 use App\Http\Controllers\ApiController;
 use App\Http\Requests\Api\v1\Product\ProductRequest;
 use App\Http\Resources\Api\v1\PaginationResource;
 use App\Http\Resources\Api\v1\ProductResource;
 use App\Models\Product;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Schema;
 
 class ProductController extends ApiController
 {
@@ -22,43 +20,9 @@ class ProductController extends ApiController
         );
     }
 
-    public function index(Request $request): JsonResponse
+    public function index(ProductFilters $filters): JsonResponse
     {
-        // product table columns
-        $productTableColumns = Schema::getColumnListing((new Product())->getTable());
-
-        // fetch data
-        $data = Product::with(['category'])
-            ->when(
-                $request->filled('title'),
-                fn (Builder $query) => $query->where('title', 'like', '%' . $request->input('title') . '%')
-            )
-            ->when(
-                $request->filled('sortBy') && in_array($request->input('sortBy'), $productTableColumns),
-                fn (Builder $query) => $query->orderBy(
-                    $request->input('sortBy'),
-                    $request->input('desc') ? 'desc' : 'asc'
-                )
-            )
-            ->when(
-                $request->filled('category'),
-                fn (Builder $query) => $query->whereHas(
-                    'categories',
-                    fn (Builder $query) => $query->where('title', 'like', '%' . $request->input('category') . '%')
-                )
-            )
-            // assume max price
-            ->when(
-                $request->integer('price'),
-                fn (Builder $query) => $query->where('price', '<', $request->integer('price'))
-            )
-            ->paginate(
-                perPage: $request->integer('limit') ? $request->integer('limit') : 20,
-                page: $request->integer('page') ? $request->integer('page') : 1
-            );
-
-        // append input parameters
-        $data->appends($request->all());
+        $data = Product::filter($filters)->paginate();
 
         // response
         return $this->sendResponse(data: [

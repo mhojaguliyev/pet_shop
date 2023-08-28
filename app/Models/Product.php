@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\HasFilters;
 use App\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -13,11 +14,12 @@ class Product extends Model
     use HasFactory;
     use HasUuid;
     use SoftDeletes;
+    use HasFilters;
 
     protected $guarded = ['id'];
 
     /**
-     * @var string[]
+     * @var array<string>
      */
     protected $with = ['category'];
 
