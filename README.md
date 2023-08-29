@@ -8,14 +8,23 @@
 
 ### 1. Docker installation
 
+To start container
 ```
 git clone git@github.com:mhojaguliyev/pet_shop.git
 cd pet_shop
+cp .env.example .env
+docker run --rm --interactive --tty --volume $PWD:/app composer install --ignore-platform-reqs --no-scripts
 docker-compose up -d --build
-docker exec -i app php composer install
-docker exec -i app php cp .env.example .env
+```
+Migrate data with seeding
+```
 docker exec -i app php artisan migrate --seed
 ```
+Seeding categories and products with dummy data
+```
+docker exec -i app php artisan db:seed --class=CategoryProductSeeder
+```
+
 Run larastan
 ```
  docker exec -i app ./vendor/bin/phpstan analyse
