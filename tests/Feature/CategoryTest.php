@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Category;
 use Tests\TestCase;
 
 class CategoryTest extends TestCase
@@ -13,6 +14,8 @@ class CategoryTest extends TestCase
      */
     public function test_categories_route_returns_ok(): void
     {
+        Category::factory()->createOne();
+
         $response = $this->get('/api/v1/categories');
         $response->assertStatus(200);
     }
@@ -24,6 +27,8 @@ class CategoryTest extends TestCase
      */
     public function test_categories_response(): void
     {
+        Category::factory()->createOne();
+
         $response = $this->get('/api/v1/categories');
         $response->assertStatus(200);
         $response->assertJsonStructure([

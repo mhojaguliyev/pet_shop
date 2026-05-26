@@ -31,7 +31,7 @@ class ProductTest extends TestCase
      */
     public function test_product_belongs_to_a_category(): void
     {
-        $product = Product::first();
+        $product = Product::factory()->createOne();
 
         $this->assertEquals(1, $product->category()->count());
         $this->assertInstanceOf(Category::class, $product->category);

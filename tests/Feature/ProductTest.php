@@ -4,7 +4,6 @@ namespace Tests\Feature;
 
 use App\Models\Product;
 use App\Models\User;
-use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
 class ProductTest extends TestCase
@@ -80,9 +79,9 @@ class ProductTest extends TestCase
     {
         $this->actingAs(User::factory()->create());
 
-        $product = DB::table('products')->first();
-        $product->title = "Updated Title";
-        $productData = json_decode(json_encode($product), true);
+        $product = Product::factory()->createOne();
+        $productData = $product->toArray();
+        $productData['title'] = 'Updated Title';
         $productData['categoriesUuid'] = $productData['categories_uuid'];
 
         $this->put('/api/v1/product/' . $product->uuid, $productData);

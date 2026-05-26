@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
 
 class AuthTest extends TestCase
@@ -16,6 +17,7 @@ class AuthTest extends TestCase
     {
         $user = User::factory()->createOne([
             'is_admin' => false,
+            'password' => Hash::make('password'),
         ]);
         $response = $this->post(
             '/api/v1/user/login',
@@ -43,7 +45,9 @@ class AuthTest extends TestCase
      */
     public function test_user_logout_response()
     {
-        $user = User::where('is_admin', false)->first();
+        $user = User::factory()->createOne([
+            'is_admin' => false,
+        ]);
         $token = \JWTAuth::fromUser($user);
 
         $this->post('api/v1/user/logout?token=' . $token)
@@ -60,7 +64,9 @@ class AuthTest extends TestCase
      */
     public function test_user_profile_response(): void
     {
-        $user = User::where('is_admin', false)->first();
+        $user = User::factory()->createOne([
+            'is_admin' => false,
+        ]);
         $token = \JWTAuth::fromUser($user);
 
         $response = $this->get('api/v1/user?token=' . $token)

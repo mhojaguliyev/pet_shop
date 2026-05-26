@@ -8,6 +8,6 @@ class JwtTokenObserver
 {
     public function creating(JwtToken $jwtToken): void
     {
-        $jwtToken->expires_at = now()->addMinutes(config('jwt.ttl'));
+        $jwtToken->expires_at = now()->addMinutes((int) config('jwt.ttl'));
     }
 }
