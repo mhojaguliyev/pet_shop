@@ -9,54 +9,33 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
+#[\Illuminate\Database\Eloquent\Attributes\Fillable([
+    'uuid',
+    'first_name',
+    'last_name',
+    'is_admin',
+    'email',
+    'email_verified_at',
+    'password',
+    'avatar',
+    'address',
+    'phone_number',
+    'is_marketing',
+    'last_login_at',
+])]
+#[\Illuminate\Database\Eloquent\Attributes\Hidden([
+    'password',
+])]
 class User extends Authenticatable implements JWTSubject
 {
+    /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory;
+
     use Notifiable;
     use HasUuid;
 
     /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
-    protected $fillable = [
-        'uuid',
-        'first_name',
-        'last_name',
-        'is_admin',
-        'email',
-        'email_verified_at',
-        'password',
-        'avatar',
-        'address',
-        'phone_number',
-        'is_marketing',
-        'last_login_at',
-    ];
-
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
-    protected $hidden = [
-        'password',
-    ];
-
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-        'last_login_at' => 'datetime',
-        'password' => 'hashed',
-    ];
-
-    /**
-     * @return HasMany<Order>
+     * @return HasMany<Order, $this>
      */
     public function orders(): HasMany
     {
@@ -74,5 +53,19 @@ class User extends Authenticatable implements JWTSubject
     public function getJWTCustomClaims(): array
     {
         return [];
+    }
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'email_verified_at' => 'datetime',
+            'last_login_at' => 'datetime',
+            'password' => 'hashed',
+        ];
     }
 }

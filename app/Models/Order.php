@@ -7,21 +7,16 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+#[\Illuminate\Database\Eloquent\Attributes\Guarded(['id'])]
 class Order extends Model
 {
+    /** @use HasFactory<\Illuminate\Database\Eloquent\Factories\Factory<self>> */
     use HasFactory;
+
     use HasUuid;
 
-    protected $guarded = ['id'];
-
-    protected $casts = [
-        'products' => 'array',
-        'address' => 'array',
-        'shipped_at' => 'datetime',
-    ];
-
     /**
-     * @return BelongsTo<User, Order>
+    * @return BelongsTo<User, $this>
      */
     public function user(): BelongsTo
     {
@@ -29,7 +24,7 @@ class Order extends Model
     }
 
     /**
-     * @return BelongsTo<Payment, Order>
+    * @return BelongsTo<Payment, $this>
      */
     public function payment(): BelongsTo
     {
@@ -37,10 +32,19 @@ class Order extends Model
     }
 
     /**
-     * @return BelongsTo<OrderStatus, Order>
+    * @return BelongsTo<OrderStatus, $this>
      */
     public function status(): BelongsTo
     {
         return $this->belongsTo(OrderStatus::class, 'order_status_uuid', 'uuid');
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'products' => 'array',
+            'address' => 'array',
+            'shipped_at' => 'datetime',
+        ];
     }
 }

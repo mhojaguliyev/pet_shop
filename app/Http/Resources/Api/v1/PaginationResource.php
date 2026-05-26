@@ -8,7 +8,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 /**
- * @mixin LengthAwarePaginator<Model>
+ * @mixin LengthAwarePaginator<int, Model>
  */
 class PaginationResource extends JsonResource
 {
