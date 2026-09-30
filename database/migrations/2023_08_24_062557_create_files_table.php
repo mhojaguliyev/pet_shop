@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('files', function (Blueprint $table): void {
             $table->id();
-            $table->uuid()->index();
+            $table->uuid()->unique();
             $table->string('name');
             $table->string('path');
             $table->string('size');

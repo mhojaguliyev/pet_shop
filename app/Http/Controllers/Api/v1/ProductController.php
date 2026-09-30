@@ -22,7 +22,7 @@ class ProductController extends ApiController implements HasMiddleware
     public static function middleware(): array
     {
         return [
-            new Middleware('auth:api', except: ['index', 'show']),
+            new Middleware('auth:sanctum', except: ['index', 'show']),
         ];
     }
 

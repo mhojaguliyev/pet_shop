@@ -6,104 +6,110 @@
 
 # Getting started
 
+Requirements: PHP 8.5, Composer, Node.js and MySQL 8.4 (or Docker).
+
 ### 1. Docker installation
 
-To start container
 ```
 git clone git@github.com:mhojaguliyev/pet_shop.git
 cd pet_shop
 cp .env.example .env
-docker run --rm --interactive --tty --volume $PWD:/app composer install --ignore-platform-reqs --no-scripts
-docker-compose up -d --build
-```
-Migrate data with seeding
-```
-docker exec -i app php artisan migrate --seed
-```
-Seeding categories and products with dummy data
-```
-docker exec -i app php artisan db:seed --class=CategoryProductSeeder
+docker compose up -d --build
+docker compose exec main composer install
+docker compose exec main php artisan key:generate
+npm install && npm run build
 ```
 
-Run larastan
+Migrate data with seeding
+
 ```
- docker exec -i app ./vendor/bin/phpstan analyse
+docker compose exec main php artisan migrate --seed
+```
+
+Seeding categories and products with dummy data
+
+```
+docker compose exec main php artisan db:seed --class=CategoryProductSeeder
 ```
 
 Run tests
+
 ```
- docker exec -i app php artisan test
+docker compose exec main composer test
 ```
-Run php insights
+
+Run static analysis and code style checks (Rector, Pint, Larastan)
+
 ```
-docker exec -i app php artisan insights
+docker compose exec main composer lint
+```
+
+Apply automated refactoring and code style fixes (Rector, Pint)
+
+```
+docker compose exec main composer refactor
+```
+
+Run PHP Insights
+
+```
+docker compose exec main php artisan insights
 ```
 
 ### 2. Manual Installation
 
-Clone the repository
+Clone the repository and switch to the repo folder
 
     git clone git@github.com:mhojaguliyev/pet_shop.git
-
-Switch to the repo folder
-
     cd pet_shop
 
-Install all the dependencies using composer
+Set the database connection in `.env` (see [Environment variables](#environment-variables)), then install dependencies, generate the application key, run the migrations and build the frontend assets
 
-    composer install
+    composer setup
 
-Copy the example env file and make the required configuration changes in the .env file
+Seed the database
 
-    cp .env.example .env
+    php artisan db:seed
 
-Generate a new application key
+Start the development processes (server, queue, logs and Vite)
 
-    php artisan key:generate
+    composer dev
 
-Run the database migrations (**Set the database connection in .env before migrating**)
-
-    php artisan migrate --seed
-
-Start the local development server
-
-    php artisan serve --port=8888
-
-You can now access the server at http://localhost:8888/api/v1
-
-**Make sure you set the correct database connection information before running the migrations** [Environment variables](#environment-variables)
-
-    php artisan migrate --seed
-    php artisan serve --port=8888
+You can now access the server at http://localhost:8000/api/v1
 
 # Code overview
 
 ## Dependencies
 
-- [tymondesigns/jwt-auth](https://github.com/tymondesigns/jwt-auth) - For authentication using JSON Web Tokens
+- [laravel/sanctum](https://github.com/laravel/sanctum) - For API token authentication
 
 ## Dev Dependencies
 
 - [barryvdh/laravel-ide-helper](https://github.com/barryvdh/laravel-ide-helper)
-- [nunomaduro/larastan](https://github.com/nunomaduro/larastan)
-- [nunomaduro/phpinsights](https://github.com/nunomaduro/phpinsights)
+- [driftingly/rector-laravel](https://github.com/driftingly/rector-laravel) - Keeps the code up to date with the latest Laravel and PHP versions
+- [larastan/larastan](https://github.com/larastan/larastan)
+- [laravel/pail](https://github.com/laravel/pail)
+- [laravel/pao](https://github.com/laravel/pao)
 - [laravel/pint](https://github.com/laravel/pint)
+- [nunomaduro/phpinsights](https://github.com/nunomaduro/phpinsights)
 
 ## Folders
 
-- `app` - Contains all the Eloquent models
 - `app/Enums` - Contains the Enums
+- `app/Events` - Contains the events
 - `app/Filters` - Contains the Eloquent Filter classes
 - `app/Http/Controllers` - Contains all the controllers
 - `app/Http/Middleware` - Contains the middlewares
 - `app/Http/Requests` - Contains all the api form requests
 - `app/Http/Resources` - Contains all the api resource files
+- `app/Listeners` - Contains the event listeners
+- `app/Models` - Contains all the Eloquent models
+- `bootstrap/app.php` - Configures routing, middleware and exception handling
 - `config` - Contains all the application configuration files
 - `database/factories` - Contains the model factory for all the models
 - `database/migrations` - Contains all the database migrations
-- `database/seeds` - Contains the database seeder
-- `routes` - Contains all the api routes defined in api_v1.php file
-- `tests` - Contains all the application tests
+- `database/seeders` - Contains the database seeders
+- `routes` - Contains the routes; api routes are defined in `routes/api/v1.php`
 - `tests/Feature` - Contains all the api feature tests
 - `tests/Unit` - Contains all the api unit tests
 
@@ -115,16 +121,24 @@ You can now access the server at http://localhost:8888/api/v1
 
 ----------
 
+## Authentication
+
+Log in via `POST /api/v1/user/login` to receive an API token, then send it with every authenticated request:
+
+    Authorization: Bearer <token>
+
+Tokens expire after `SANCTUM_TOKEN_EXPIRATION` minutes (default 120) and are revoked on logout. Expired tokens are pruned daily by the scheduler, so make sure `php artisan schedule:run` runs every minute in production.
+
 ## API Documentation
 
-The api documentation can be accessed at [http://localhost:8888](http://localhost:8888).
+The api documentation can be accessed at the application root, e.g. [http://localhost:8888](http://localhost:8888) with Docker (`APP_PORT`).
 
-After seeding the database, 
+After seeding the database,
 1. The default admin credentials are:
 - Email - admin@example.com
-- Password - 123456
+- Password - admin
 2. The default user credentials are:
 - Email - user@example.com
-- Password - 123456
+- Password - user
 
 ----------

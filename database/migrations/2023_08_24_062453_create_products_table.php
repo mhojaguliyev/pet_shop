@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignUuid('categories_uuid')->constrained('categories', 'uuid');
             $table->string('title');
-            $table->uuid()->index();
+            $table->uuid()->unique();
             $table->decimal('price', 12, 2)->unsigned()->default(0);
             $table->text('description');
             $table->json('metadata')->nullable();

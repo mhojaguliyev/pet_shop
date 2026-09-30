@@ -17,8 +17,8 @@ class UserTypeMiddleware
     public function handle(Request $request, Closure $next, int $type): Response
     {
         /** @var User|null $user */
-        $user = auth()->user();
-        if ($user && $user->is_admin == $type) {
+        $user = $request->user();
+        if ($user && (int) $user->is_admin === $type) {
             return $next($request);
         }
 

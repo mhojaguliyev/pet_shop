@@ -20,7 +20,6 @@
 /public/hot
 /public/storage
 /storage/*.key
-/storage/jwt/*.pem
 /storage/pail
 /vendor
 .phpstorm.meta.php

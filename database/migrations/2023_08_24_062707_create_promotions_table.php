@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('promotions', function (Blueprint $table): void {
             $table->id();
-            $table->uuid()->index();
+            $table->uuid()->unique();
             $table->string('title');
             $table->text('content')->nullable();
             $table->json('metadata')->nullable();

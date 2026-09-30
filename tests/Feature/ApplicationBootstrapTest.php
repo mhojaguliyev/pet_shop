@@ -2,11 +2,9 @@
 
 namespace Tests\Feature;
 
-use App\Models\Auth\JwtToken;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
-use Tymon\JWTAuth\Facades\JWTAuth;
 
 class ApplicationBootstrapTest extends TestCase
 {
@@ -32,11 +30,11 @@ class ApplicationBootstrapTest extends TestCase
     }
 
     /**
-     * Test an invalid jwt token is rendered as a json response.
+     * Test an invalid bearer token is rendered as a json response.
      */
     public function test_invalid_token_returns_json_401(): void
     {
-        $this->get('api/v1/user?token=invalid-token')
+        $this->withToken('1|invalid-token')->get('api/v1/user')
             ->assertUnauthorized()
             ->assertExactJson(['message' => 'Unauthenticated', 'data' => []]);
     }
@@ -56,7 +54,7 @@ class ApplicationBootstrapTest extends TestCase
      */
     public function test_wrong_http_method_returns_json_error(): void
     {
-        $this->delete('api/v1/categories')->assertInternalServerError()
+        $this->delete('api/v1/categories')->assertMethodNotAllowed()
             ->assertJsonStructure(['message', 'data']);
     }
 
@@ -66,17 +64,17 @@ class ApplicationBootstrapTest extends TestCase
     public function test_user_type_middleware_rejects_admin_on_user_route(): void
     {
         $admin = User::factory()->createOne(['is_admin' => true]);
-        $token = JWTAuth::fromUser($admin);
+        $token = $admin->createToken('api')->plainTextToken;
 
-        $this->get('api/v1/user?token='.$token)
+        $this->withToken($token)->get('api/v1/user')
             ->assertForbidden()
             ->assertExactJson(['message' => 'Forbidden', 'data' => []]);
     }
 
     /**
-     * Test login event listener is discovered and the jwt token observer sets expiry.
+     * Test login updates the last login time and issues an expiring token.
      */
-    public function test_login_stores_jwt_token_with_expiry(): void
+    public function test_login_issues_expiring_token_and_updates_last_login(): void
     {
         $this->freezeSecond();
 
@@ -88,9 +86,7 @@ class ApplicationBootstrapTest extends TestCase
         $this->post('api/v1/user/login', ['email' => $user->email, 'password' => 'password'])->assertOk();
 
         $this->assertNotNull($user->fresh()->last_login_at);
-        $this->assertSame(1, JwtToken::query()->where('user_uuid', $user->uuid)->count());
-
-        $jwtToken = JwtToken::query()->where('user_uuid', $user->uuid)->firstOrFail();
-        $this->assertTrue($jwtToken->expires_at->equalTo(now()->addMinutes((int) config('jwt.ttl'))));
+        $this->assertSame(1, $user->tokens()->count());
+        $this->assertTrue($user->tokens()->sole()->expires_at->equalTo(now()->addMinutes((int) config('sanctum.expiration'))));
     }
 }

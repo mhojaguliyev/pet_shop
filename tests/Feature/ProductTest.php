@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Product;
 use App\Models\User;
+use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
 class ProductTest extends TestCase
@@ -33,7 +34,7 @@ class ProductTest extends TestCase
      */
     public function test_authenticated_users_can_create_a_new_product(): void
     {
-        $this->actingAs(User::factory()->create());
+        Sanctum::actingAs(User::factory()->create());
 
         // prepare product data
         $product = Product::factory()->create();
@@ -67,7 +68,7 @@ class ProductTest extends TestCase
      */
     public function test_authenticated_user_can_update_the_product(): void
     {
-        $this->actingAs(User::factory()->create());
+        Sanctum::actingAs(User::factory()->create());
 
         $product = Product::factory()->createOne();
         $productData = $product->toArray();
@@ -88,7 +89,7 @@ class ProductTest extends TestCase
      */
     public function test_authenticated_user_can_delete_the_product(): void
     {
-        $this->actingAs(User::factory()->create());
+        Sanctum::actingAs(User::factory()->create());
 
         $product = Product::factory()->createOne();
         $this->delete('/api/v1/product/'.$product->uuid);

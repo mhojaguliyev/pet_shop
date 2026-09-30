@@ -496,7 +496,6 @@ components:
       type: http
       name: bearerAuth
       in: header
-      bearerFormat: JWT
       scheme: bearer
   responses:
     NotFound:

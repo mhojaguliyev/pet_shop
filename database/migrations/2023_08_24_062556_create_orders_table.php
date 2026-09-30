@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignUuid('user_uuid')->constrained('users', 'uuid');
             $table->foreignUuid('order_status_uuid')->constrained('order_statuses', 'uuid');
             $table->foreignUuid('payment_uuid')->constrained('payments', 'uuid');
-            $table->uuid()->index();
+            $table->uuid()->unique();
             $table->json('products');
             $table->json('address');
             $table->decimal('delivery_fee', 8, 2)->unsigned()->nullable();

@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('order_statuses', function (Blueprint $table): void {
             $table->id();
-            $table->uuid()->index();
+            $table->uuid()->unique();
             $table->string('title');
             $table->timestamps();
         });

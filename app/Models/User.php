@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Tymon\JWTAuth\Contracts\JWTSubject;
+use Laravel\Sanctum\HasApiTokens;
 
 #[Fillable([
     'uuid',
@@ -29,8 +29,10 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
 #[Hidden([
     'password',
 ])]
-class User extends Authenticatable implements JWTSubject
+class User extends Authenticatable
 {
+    use HasApiTokens;
+
     /** @use HasFactory<UserFactory> */
     use HasFactory;
 
@@ -43,19 +45,6 @@ class User extends Authenticatable implements JWTSubject
     public function orders(): HasMany
     {
         return $this->hasMany(Order::class, 'user_uuid', 'uuid');
-    }
-
-    public function getJWTIdentifier(): string
-    {
-        return $this->getKey();
-    }
-
-    /**
-     * @return array<int, string>
-     */
-    public function getJWTCustomClaims(): array
-    {
-        return [];
     }
 
     /**

@@ -14,6 +14,6 @@ class LoggedIn
     /**
      * Create a new event instance.
      */
-    public function __construct(public User $user, public string $token) {}
+    public function __construct(public User $user) {}
 
 }
