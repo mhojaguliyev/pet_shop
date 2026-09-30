@@ -3,13 +3,16 @@
 namespace App\Models;
 
 use App\Traits\HasUuid;
+use Database\Factories\UserFactory;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
-#[\Illuminate\Database\Eloquent\Attributes\Fillable([
+#[Fillable([
     'uuid',
     'first_name',
     'last_name',
@@ -23,16 +26,16 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
     'is_marketing',
     'last_login_at',
 ])]
-#[\Illuminate\Database\Eloquent\Attributes\Hidden([
+#[Hidden([
     'password',
 ])]
 class User extends Authenticatable implements JWTSubject
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
+    /** @use HasFactory<UserFactory> */
     use HasFactory;
 
-    use Notifiable;
     use HasUuid;
+    use Notifiable;
 
     /**
      * @return HasMany<Order, $this>

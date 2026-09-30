@@ -19,6 +19,7 @@ class UserResource extends JsonResource
     public function toArray(Request $request): array
     {
         $dateFormat = config('app.date_format');
+
         return [
             'id' => $this->id,
             'uuid' => $this->uuid,
@@ -26,14 +27,14 @@ class UserResource extends JsonResource
             'lastName' => $this->last_name,
             'isAdmin' => (bool) $this->is_admin,
             'email' => $this->email,
-            'emailVerifiedAt' => optional($this->email_verified_at)->format($dateFormat),
+            'emailVerifiedAt' => $this->email_verified_at?->format($dateFormat),
             'avatar' => $this->avatar,
             'address' => $this->address,
             'phoneNumber' => $this->phone_number,
             'isMarketing' => (bool) $this->is_marketing,
-            'createdAt' => optional($this->created_at)->format($dateFormat),
-            'updatedAt' => optional($this->updated_at)->format($dateFormat),
-            'lastLoginAt' => optional($this->last_login_at)->format($dateFormat),
+            'createdAt' => $this->created_at?->format($dateFormat),
+            'updatedAt' => $this->updated_at?->format($dateFormat),
+            'lastLoginAt' => $this->last_login_at?->format($dateFormat),
         ];
     }
 }

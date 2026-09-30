@@ -5,13 +5,12 @@ namespace Tests\Feature;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthTest extends TestCase
 {
     /**
      * Test if user can log in trough internal api.
-     *
-     * @return void
      */
     public function test_user_login_response(): void
     {
@@ -26,32 +25,28 @@ class AuthTest extends TestCase
                 'password' => 'password',
             ]
         );
-        $response->assertStatus(200);
+        $response->assertOk();
         $response->assertJsonStructure([
             'message',
             'data' => [
                 'token',
                 'tokenType',
-            ]
+            ],
         ]);
-        \JWTAuth::setToken($response->json('data.token'))->checkOrFail();
+        JWTAuth::setToken($response->json('data.token'))->checkOrFail();
     }
-
 
     /**
      * Test if user can log out trough internal api.
-     *
-     * @return void
      */
-    public function test_user_logout_response()
+    public function test_user_logout_response(): void
     {
         $user = User::factory()->createOne([
             'is_admin' => false,
         ]);
-        $token = \JWTAuth::fromUser($user);
+        $token = JWTAuth::fromUser($user);
 
-        $this->post('api/v1/user/logout?token=' . $token)
-            ->assertStatus(200)
+        $this->post('api/v1/user/logout?token='.$token)->assertOk()
             ->assertJsonStructure(['message']);
 
         $this->assertGuest('api');
@@ -59,25 +54,22 @@ class AuthTest extends TestCase
 
     /**
      * Test user profile response
-     *
-     * @return void
      */
     public function test_user_profile_response(): void
     {
         $user = User::factory()->createOne([
             'is_admin' => false,
         ]);
-        $token = \JWTAuth::fromUser($user);
+        $token = JWTAuth::fromUser($user);
 
-        $response = $this->get('api/v1/user?token=' . $token)
-            ->assertStatus(200)
+        $response = $this->get('api/v1/user?token='.$token)->assertOk()
             ->assertJsonStructure([
                 'message',
                 'data' => [
                     'firstName',
                     'lastName',
                     'email',
-                ]
+                ],
             ]);
 
         $this->assertEquals($response->json('data.email'), $user->email);

@@ -8,17 +8,12 @@ use Illuminate\Http\Request;
 
 abstract class QueryFilter
 {
-    protected Request $request;
-
     /**
      * @var Builder<Model>
      */
     protected Builder $builder;
 
-    public function __construct(Request $request)
-    {
-        $this->request = $request;
-    }
+    public function __construct(protected Request $request) {}
 
     /**
      * @return array<string, mixed>
@@ -29,7 +24,7 @@ abstract class QueryFilter
     }
 
     /**
-     * @param Builder<Model> $builder
+     * @param  Builder<Model>  $builder
      * @return Builder<Model>
      */
     public function apply(Builder $builder): Builder

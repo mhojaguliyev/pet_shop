@@ -11,10 +11,8 @@ class ProductTest extends TestCase
 {
     /**
      * Test if products table has some columns
-     *
-     * @return void
      */
-    public function test_products_table_has_expected_columns()
+    public function test_products_table_has_expected_columns(): void
     {
         $this->assertTrue(
             Schema::hasColumns('products', [
@@ -26,8 +24,6 @@ class ProductTest extends TestCase
 
     /**
      * Test if products has category relation
-     *
-     * @return void
      */
     public function test_product_belongs_to_a_category(): void
     {

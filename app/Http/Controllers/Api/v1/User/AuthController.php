@@ -8,15 +8,21 @@ use App\Http\Controllers\ApiController;
 use App\Http\Requests\Api\v1\LoginRequest;
 use App\Http\Resources\Api\v1\UserResource;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class AuthController extends ApiController
+class AuthController extends ApiController implements HasMiddleware
 {
-    public function __construct()
+    /**
+     * Get the middleware that should be assigned to the controller.
+     *
+     * @return array<int, Middleware>
+     */
+    public static function middleware(): array
     {
-        $this->middleware(
-            ['auth:api', 'user_type:' . UserType::USER->value],
-            ['except' => ['login']]
-        );
+        return [
+            new Middleware(['auth:api', 'user_type:'.UserType::USER->value], except: ['login']),
+        ];
     }
 
     public function login(LoginRequest $request): JsonResponse
@@ -31,7 +37,7 @@ class AuthController extends ApiController
 
         // fire event
         if (auth()->user() !== null && is_string($token)) {
-            LoggedIn::dispatch(auth()->user(), $token);
+            event(new LoggedIn(auth()->user(), $token));
         }
 
         // send response
@@ -50,6 +56,7 @@ class AuthController extends ApiController
     public function profile(): JsonResponse
     {
         $user = auth()->user();
+
         return $this->sendResponse(data: new UserResource($user));
     }
 }

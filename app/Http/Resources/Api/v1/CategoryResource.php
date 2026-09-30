@@ -19,13 +19,14 @@ class CategoryResource extends JsonResource
     public function toArray(Request $request): array
     {
         $dateFormat = config('app.date_format');
+
         return [
             'id' => $this->id,
             'uuid' => $this->uuid,
             'title' => $this->title,
             'slug' => $this->slug,
-            'createdAt' => optional($this->created_at)->format($dateFormat),
-            'updatedAt' => optional($this->updated_at)->format($dateFormat),
+            'createdAt' => $this->created_at?->format($dateFormat),
+            'updatedAt' => $this->updated_at?->format($dateFormat),
         ];
     }
 }

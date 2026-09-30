@@ -5,7 +5,7 @@ use App\Http\Controllers\Api\v1\ProductController;
 use App\Http\Controllers\Api\v1\User\AuthController as UserAuthController;
 use Illuminate\Support\Facades\Route;
 
-Route::group(['as' => 'api.'], function () {
+Route::name('api.')->group(function (): void {
     // auth routes
     Route::post('user/login', [UserAuthController::class, 'login']);
     Route::post('user/logout', [UserAuthController::class, 'logout']);

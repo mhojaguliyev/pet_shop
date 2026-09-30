@@ -3,20 +3,22 @@
 namespace App\Models;
 
 use App\Traits\HasUuid;
+use Illuminate\Database\Eloquent\Attributes\Guarded;
+use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-#[\Illuminate\Database\Eloquent\Attributes\Guarded(['id'])]
+#[Guarded(['id'])]
 class Order extends Model
 {
-    /** @use HasFactory<\Illuminate\Database\Eloquent\Factories\Factory<self>> */
+    /** @use HasFactory<Factory<self>> */
     use HasFactory;
 
     use HasUuid;
 
     /**
-    * @return BelongsTo<User, $this>
+     * @return BelongsTo<User, $this>
      */
     public function user(): BelongsTo
     {
@@ -24,7 +26,7 @@ class Order extends Model
     }
 
     /**
-    * @return BelongsTo<Payment, $this>
+     * @return BelongsTo<Payment, $this>
      */
     public function payment(): BelongsTo
     {
@@ -32,7 +34,7 @@ class Order extends Model
     }
 
     /**
-    * @return BelongsTo<OrderStatus, $this>
+     * @return BelongsTo<OrderStatus, $this>
      */
     public function status(): BelongsTo
     {

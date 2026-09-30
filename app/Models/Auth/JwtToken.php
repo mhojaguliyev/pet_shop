@@ -2,13 +2,18 @@
 
 namespace App\Models\Auth;
 
+use App\Observers\Auth\JwtTokenObserver;
+use Illuminate\Database\Eloquent\Attributes\Guarded;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-#[\Illuminate\Database\Eloquent\Attributes\Guarded(['id'])]
+#[Guarded(['id'])]
+#[ObservedBy(JwtTokenObserver::class)]
 class JwtToken extends Model
 {
-    /** @use HasFactory<\Illuminate\Database\Eloquent\Factories\Factory<self>> */
+    /** @use HasFactory<Factory<self>> */
     use HasFactory;
 
     protected function casts(): array

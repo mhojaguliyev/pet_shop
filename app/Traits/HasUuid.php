@@ -2,23 +2,19 @@
 
 namespace App\Traits;
 
-use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 
 trait HasUuid
 {
+    use HasUuids;
+
     /**
-     * Generate uuid for model Eloquent model's uuid column
+     * Get the columns that should receive a unique identifier.
      *
-     * @return void
+     * @return array<int, string>
      */
-    protected static function boot(): void
+    public function uniqueIds(): array
     {
-        parent::boot();
-        static::creating(function ($model) {
-            $property = property_exists($model, 'uuidKey') ? $model->uuidKey : 'uuid';
-            if (empty($model->{$property})) {
-                $model->{$property} = Str::uuid()->toString();
-            }
-        });
+        return ['uuid'];
     }
 }

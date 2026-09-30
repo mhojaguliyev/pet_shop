@@ -8,11 +8,7 @@ use JsonSerializable;
 class ApiController extends Controller
 {
     /**
-     * @param string $message
-     * @param array<string, string|true|JsonSerializable>|JsonSerializable $data
-     * @param int $code
-     *
-     * @return JsonResponse
+     * @param  array<string, string|true|JsonSerializable>|JsonSerializable  $data
      */
     public function sendResponse(string $message = 'OK', array|JsonSerializable $data = [], int $code = 200): JsonResponse
     {

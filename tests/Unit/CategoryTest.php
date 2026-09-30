@@ -10,8 +10,6 @@ class CategoryTest extends TestCase
 {
     /**
      * Test if category has products relation
-     *
-     * @return void
      */
     public function test_category_has_non_empty_products_relation(): void
     {

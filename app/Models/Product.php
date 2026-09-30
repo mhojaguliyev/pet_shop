@@ -4,24 +4,27 @@ namespace App\Models;
 
 use App\Traits\HasFilters;
 use App\Traits\HasUuid;
+use Database\Factories\ProductFactory;
+use Illuminate\Database\Eloquent\Attributes\Guarded;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-#[\Illuminate\Database\Eloquent\Attributes\Guarded(['id'])]
+#[Guarded(['id'])]
 class Product extends Model
 {
-    /** @use HasFactory<\Database\Factories\ProductFactory> */
+    /** @use HasFactory<ProductFactory> */
     use HasFactory;
 
+    use HasFilters;
     use HasUuid;
     use SoftDeletes;
-    use HasFilters;
 
     /**
      * @var list<string>
      */
+    #[\Override]
     protected $with = ['category'];
 
     /**

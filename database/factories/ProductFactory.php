@@ -7,10 +7,11 @@ use App\Models\Product;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Product>
+ * @extends Factory<Product>
  */
 class ProductFactory extends Factory
 {
+    #[\Override]
     protected $model = Product::class;
 
     /**
@@ -24,7 +25,7 @@ class ProductFactory extends Factory
             'categories_uuid' => Category::factory()->create()->uuid,
             'title' => fake()->sentence(3),
             'price' => fake()->numberBetween(1),
-            'description' => fake()->paragraph,
+            'description' => fake()->paragraph(),
         ];
     }
 }

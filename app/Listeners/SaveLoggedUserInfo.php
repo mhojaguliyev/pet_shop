@@ -8,13 +8,6 @@ use App\Models\Auth\JwtToken;
 class SaveLoggedUserInfo
 {
     /**
-     * Create the event listener.
-     */
-    public function __construct()
-    {
-    }
-
-    /**
      * Handle the event.
      */
     public function handle(LoggedIn $event): void
@@ -32,6 +25,6 @@ class SaveLoggedUserInfo
             'token_title' => config('jwt.algo'),
         ];
 
-        JwtToken::create($tokenData);
+        JwtToken::query()->create($tokenData);
     }
 }
