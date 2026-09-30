@@ -36,7 +36,7 @@ class UserSeeder extends Seeder
         ];
 
         foreach ($userData as $userDatum) {
-            User::create($userDatum);
+            User::query()->create($userDatum);
         }
     }
 }

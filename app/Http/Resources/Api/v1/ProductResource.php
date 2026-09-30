@@ -19,6 +19,7 @@ class ProductResource extends JsonResource
     public function toArray(Request $request): array
     {
         $dateFormat = config('app.date_format');
+
         return [
             'id' => $this->id,
             'category' => new CategoryResource($this->category),
@@ -27,8 +28,8 @@ class ProductResource extends JsonResource
             'price' => (float) $this->price,
             'description' => $this->description,
             'metadata' => $this->metadata ?? [],
-            'createdAt' => optional($this->created_at)->format($dateFormat),
-            'updatedAt' => optional($this->updated_at)->format($dateFormat),
+            'createdAt' => $this->created_at?->format($dateFormat),
+            'updatedAt' => $this->updated_at?->format($dateFormat),
         ];
     }
 }

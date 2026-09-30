@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Schema;
 class ProductFilters extends QueryFilter
 {
     /**
-     * @param string $search
      * @return Builder<Model>
      */
     public function title(string $search): Builder
@@ -18,7 +17,6 @@ class ProductFilters extends QueryFilter
     }
 
     /**
-     * @param string $column
      * @return Builder<Model>
      */
     public function sortBy(string $column): Builder
@@ -32,7 +30,6 @@ class ProductFilters extends QueryFilter
     }
 
     /**
-     * @param string $search
      * @return Builder<Model>
      */
     public function category(string $search): Builder
@@ -44,7 +41,6 @@ class ProductFilters extends QueryFilter
     }
 
     /**
-     * @param float $value
      * @return Builder<Model>
      */
     public function price(float $value): Builder

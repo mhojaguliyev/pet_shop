@@ -4,14 +4,13 @@ namespace Tests\Feature;
 
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Laravel\Sanctum\PersonalAccessToken;
 use Tests\TestCase;
 
 class AuthTest extends TestCase
 {
     /**
      * Test if user can log in trough internal api.
-     *
-     * @return void
      */
     public function test_user_login_response(): void
     {
@@ -26,60 +25,91 @@ class AuthTest extends TestCase
                 'password' => 'password',
             ]
         );
-        $response->assertStatus(200);
+        $response->assertOk();
         $response->assertJsonStructure([
             'message',
             'data' => [
                 'token',
                 'tokenType',
-            ]
+            ],
         ]);
-        \JWTAuth::setToken($response->json('data.token'))->checkOrFail();
+        $this->assertTrue(PersonalAccessToken::findToken($response->json('data.token'))?->tokenable->is($user));
     }
-
 
     /**
      * Test if user can log out trough internal api.
-     *
-     * @return void
      */
-    public function test_user_logout_response()
+    public function test_user_logout_response(): void
     {
         $user = User::factory()->createOne([
             'is_admin' => false,
         ]);
-        $token = \JWTAuth::fromUser($user);
+        $token = $user->createToken('api')->plainTextToken;
 
-        $this->post('api/v1/user/logout?token=' . $token)
-            ->assertStatus(200)
+        $this->withToken($token)->post('api/v1/user/logout')->assertOk()
             ->assertJsonStructure(['message']);
 
-        $this->assertGuest('api');
+        $this->assertDatabaseCount('personal_access_tokens', 0);
     }
 
     /**
      * Test user profile response
-     *
-     * @return void
      */
     public function test_user_profile_response(): void
     {
         $user = User::factory()->createOne([
             'is_admin' => false,
         ]);
-        $token = \JWTAuth::fromUser($user);
+        $token = $user->createToken('api')->plainTextToken;
 
-        $response = $this->get('api/v1/user?token=' . $token)
-            ->assertStatus(200)
+        $response = $this->withToken($token)->get('api/v1/user')->assertOk()
             ->assertJsonStructure([
                 'message',
                 'data' => [
                     'firstName',
                     'lastName',
                     'email',
-                ]
+                ],
             ]);
 
         $this->assertEquals($response->json('data.email'), $user->email);
+    }
+
+    /**
+     * Test login fails with a wrong password.
+     */
+    public function test_user_login_fails_with_wrong_password(): void
+    {
+        $user = User::factory()->createOne(['is_admin' => false]);
+
+        $this->post('/api/v1/user/login', ['email' => $user->email, 'password' => 'wrong-password'])
+            ->assertUnauthorized()
+            ->assertExactJson(['message' => 'Unauthorized', 'data' => []]);
+
+        $this->assertDatabaseCount('personal_access_tokens', 0);
+    }
+
+    /**
+     * Test admins cannot log in through the user login endpoint.
+     */
+    public function test_admin_cannot_log_in_as_user(): void
+    {
+        $admin = User::factory()->createOne(['is_admin' => true]);
+
+        $this->post('/api/v1/user/login', ['email' => $admin->email, 'password' => 'password'])
+            ->assertUnauthorized();
+    }
+
+    /**
+     * Test expired tokens are rejected.
+     */
+    public function test_expired_token_is_rejected(): void
+    {
+        $user = User::factory()->createOne(['is_admin' => false]);
+        $token = $user->createToken('api', expiresAt: now()->addMinute())->plainTextToken;
+
+        $this->travel(2)->minutes();
+
+        $this->withToken($token)->get('api/v1/user')->assertUnauthorized();
     }
 }

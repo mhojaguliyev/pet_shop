@@ -9,28 +9,24 @@ class CategoryTest extends TestCase
 {
     /**
      * Test categories route returns ok
-     *
-     * @return void
      */
     public function test_categories_route_returns_ok(): void
     {
         Category::factory()->createOne();
 
         $response = $this->get('/api/v1/categories');
-        $response->assertStatus(200);
+        $response->assertOk();
     }
 
     /**
      * Test categories response
-     *
-     * @return void
      */
     public function test_categories_response(): void
     {
         Category::factory()->createOne();
 
         $response = $this->get('/api/v1/categories');
-        $response->assertStatus(200);
+        $response->assertOk();
         $response->assertJsonStructure([
             'message',
             'data' => [

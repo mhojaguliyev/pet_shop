@@ -9,20 +9,26 @@ use App\Http\Resources\Api\v1\PaginationResource;
 use App\Http\Resources\Api\v1\ProductResource;
 use App\Models\Product;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class ProductController extends ApiController
+class ProductController extends ApiController implements HasMiddleware
 {
-    public function __construct()
+    /**
+     * Get the middleware that should be assigned to the controller.
+     *
+     * @return array<int, Middleware>
+     */
+    public static function middleware(): array
     {
-        $this->middleware(
-            ['auth:api'],
-            ['except' => ['index', 'show']]
-        );
+        return [
+            new Middleware('auth:sanctum', except: ['index', 'show']),
+        ];
     }
 
     public function index(ProductFilters $filters): JsonResponse
     {
-        $data = Product::filter($filters)->paginate($filters->limit());
+        $data = Product::query()->filter($filters)->paginate($filters->limit());
 
         // response
         return $this->sendResponse(data: [
@@ -35,10 +41,11 @@ class ProductController extends ApiController
     {
         // create product
         $productData = $request->prepareValidated();
-        $product = Product::create($productData);
+        $product = Product::query()->create($productData);
 
         // load relation
         $product->load(['category']);
+
         return $this->sendResponse('Created', data: new ProductResource($product), code: 201);
     }
 

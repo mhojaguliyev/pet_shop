@@ -4,7 +4,7 @@ namespace App\Enums;
 
 enum PaymentType: string
 {
-    case CREDIT_CARD = 'credit_card';
-    case CASH_ON_DELIVERY = 'cash_on_delivery';
-    case BANK_TRANSFER = 'bank_transfer';
+    case CreditCard = 'credit_card';
+    case CashOnDelivery = 'cash_on_delivery';
+    case BankTransfer = 'bank_transfer';
 }

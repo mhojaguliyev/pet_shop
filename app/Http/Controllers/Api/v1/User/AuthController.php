@@ -7,49 +7,54 @@ use App\Events\LoggedIn;
 use App\Http\Controllers\ApiController;
 use App\Http\Requests\Api\v1\LoginRequest;
 use App\Http\Resources\Api\v1\UserResource;
+use App\Models\User;
+use Illuminate\Container\Attributes\CurrentUser;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Support\Facades\Hash;
 
-class AuthController extends ApiController
+class AuthController extends ApiController implements HasMiddleware
 {
-    public function __construct()
+    /**
+     * Get the middleware that should be assigned to the controller.
+     *
+     * @return array<int, Middleware>
+     */
+    public static function middleware(): array
     {
-        $this->middleware(
-            ['auth:api', 'user_type:' . UserType::USER->value],
-            ['except' => ['login']]
-        );
+        return [
+            new Middleware(['auth:sanctum', 'user_type:'.UserType::User->value], except: ['login']),
+        ];
     }
 
     public function login(LoginRequest $request): JsonResponse
     {
-        $credentials = $request->validated();
-        $credentials['is_admin'] = false;
+        $user = User::query()
+            ->where('email', $request->validated('email'))
+            ->where('is_admin', false)
+            ->first();
 
-        // auth check
-        if (! $token = auth()->attempt($credentials)) {
+        if (! $user || ! Hash::check($request->validated('password'), $user->password)) {
             return $this->sendResponse('Unauthorized', code: 401);
         }
 
-        // fire event
-        if (auth()->user() !== null && is_string($token)) {
-            LoggedIn::dispatch(auth()->user(), $token);
-        }
+        $token = $user->createToken('api', expiresAt: now()->addMinutes((int) config('sanctum.expiration')))->plainTextToken;
 
-        // send response
+        event(new LoggedIn($user));
+
         return $this->sendResponse(data: ['token' => $token, 'tokenType' => 'bearer']);
     }
 
-    public function logout(): JsonResponse
+    public function logout(#[CurrentUser] User $user): JsonResponse
     {
-        // action
-        auth()->logout();
+        $user->currentAccessToken()->delete();
 
-        // send response
         return $this->sendResponse('Successfully logged out');
     }
 
-    public function profile(): JsonResponse
+    public function profile(#[CurrentUser] User $user): JsonResponse
     {
-        $user = auth()->user();
         return $this->sendResponse(data: new UserResource($user));
     }
 }

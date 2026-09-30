@@ -3,13 +3,16 @@
 namespace App\Models;
 
 use App\Traits\HasUuid;
+use Database\Factories\UserFactory;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Tymon\JWTAuth\Contracts\JWTSubject;
+use Laravel\Sanctum\HasApiTokens;
 
-#[\Illuminate\Database\Eloquent\Attributes\Fillable([
+#[Fillable([
     'uuid',
     'first_name',
     'last_name',
@@ -23,16 +26,18 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
     'is_marketing',
     'last_login_at',
 ])]
-#[\Illuminate\Database\Eloquent\Attributes\Hidden([
+#[Hidden([
     'password',
 ])]
-class User extends Authenticatable implements JWTSubject
+class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
+    use HasApiTokens;
+
+    /** @use HasFactory<UserFactory> */
     use HasFactory;
 
-    use Notifiable;
     use HasUuid;
+    use Notifiable;
 
     /**
      * @return HasMany<Order, $this>
@@ -40,19 +45,6 @@ class User extends Authenticatable implements JWTSubject
     public function orders(): HasMany
     {
         return $this->hasMany(Order::class, 'user_uuid', 'uuid');
-    }
-
-    public function getJWTIdentifier(): string
-    {
-        return $this->getKey();
-    }
-
-    /**
-     * @return array<int, string>
-     */
-    public function getJWTCustomClaims(): array
-    {
-        return [];
     }
 
     /**
